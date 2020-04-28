@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using UniNotasApi.Data;
 
 namespace UniNotasApi
 {
@@ -25,6 +27,9 @@ namespace UniNotasApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddDbContext<UniNotasContext>(
+                opt => opt.UseSqlServer(Configuration.GetConnectionString("connectionString")));
+            services.AddScoped<UniNotasContext, UniNotasContext>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
