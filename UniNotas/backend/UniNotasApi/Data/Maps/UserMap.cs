@@ -11,9 +11,10 @@ namespace UniNotasApi.Data.Maps
             builder.ToTable("User");
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Username)
-                   .IsRequired();
+                   .IsRequired().HasColumnType("varchar(80)");
+;
             builder.Property(x => x.Password)
-                   .IsRequired();
+                   .IsRequired().HasColumnType("varchar(16)");
         }
     }
 }
