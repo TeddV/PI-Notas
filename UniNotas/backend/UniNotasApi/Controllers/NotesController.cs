@@ -11,12 +11,11 @@ using UniNotasApi.Models;
 
 namespace UniNotasApi.Controllers
 {
-    [Route("v1/notes")]
+    [Route("Notes")]
     public class NotesController : Controller
     {
         [HttpGet]
         [Route("")]
-        [AllowAnonymous]
         public async Task<ActionResult<List<Note>>> Get([FromServices] UniNotasContext context)
         {
             var notes = await context.notes.Include(x => x.Book).AsNoTracking().ToListAsync();
@@ -25,7 +24,6 @@ namespace UniNotasApi.Controllers
 
         [HttpGet]
         [Route("{id:int}")]
-        [AllowAnonymous]
         public async Task<ActionResult<Note>> GetById([FromServices] UniNotasContext context, int id)
         {
             var notes = await context.notes.Include(x => x.Book).AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
@@ -34,7 +32,6 @@ namespace UniNotasApi.Controllers
 
         [HttpGet]
         [Route("book/{id:int}")]
-        [AllowAnonymous]
         public async Task<ActionResult<List<Note>>> GetByCategory([FromServices] UniNotasContext context, int id)
         {
             var notes = await context.notes.Include(x => x.Book).AsNoTracking().Where(x => x.BookId == id).ToListAsync();

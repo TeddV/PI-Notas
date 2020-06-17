@@ -10,12 +10,11 @@ using UniNotasApi.Models;
 namespace UniNotasApi.Controllers
 {
     
-    [Route("v1/book")]
+    [Route("Books")]
     public class BookController : Controller
     {
         [HttpGet]
         [Route("")]
-        [AllowAnonymous]
         public async Task<ActionResult<List<Book>>> Get([FromServices] UniNotasContext context)
         {
             var books = await context.books.AsNoTracking().ToListAsync();
@@ -24,7 +23,6 @@ namespace UniNotasApi.Controllers
 
         [HttpGet]
         [Route("{id:int}")]
-        [AllowAnonymous]
         public async Task<ActionResult<Book>> GetById([FromServices] UniNotasContext context, int id)
         {
             var books = await context.books.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
@@ -33,7 +31,6 @@ namespace UniNotasApi.Controllers
 
         [HttpPost]
         [Route("")]
-        [AllowAnonymous]
         public async Task<ActionResult<Book>> Post(
             [FromServices] UniNotasContext context,
             [FromBody]Book model)
@@ -56,7 +53,6 @@ namespace UniNotasApi.Controllers
 
         [HttpPut]
         [Route("{id:int}")]
-        [Authorize(Roles = "employee")]
         public async Task<ActionResult<Book>> Put(
             [FromServices] UniNotasContext context,
             int id,
