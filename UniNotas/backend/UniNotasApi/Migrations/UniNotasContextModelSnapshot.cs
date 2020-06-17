@@ -26,20 +26,13 @@ namespace UniNotasApi.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("TagId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("varchar(80)")
-                        .HasMaxLength(80);
+                        .HasColumnType("varchar(60)")
+                        .HasMaxLength(60);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TagId")
-                        .IsUnique();
-
-                    b.ToTable("Book");
+                    b.ToTable("books");
                 });
 
             modelBuilder.Entity("UniNotasApi.Models.Note", b =>
@@ -49,10 +42,6 @@ namespace UniNotasApi.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Audio")
-                        .HasColumnType("varchar(1024)")
-                        .HasMaxLength(1024);
-
                     b.Property<long>("BookId")
                         .HasColumnType("bigint");
 
@@ -60,70 +49,20 @@ namespace UniNotasApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Image")
-                        .HasColumnType("varchar(1024)")
-                        .HasMaxLength(1024);
-
-                    b.Property<DateTime>("LastUpdateDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Text")
                         .HasColumnType("varchar(1024)")
-                        .HasMaxLength(512);
+                        .HasMaxLength(1024);
 
                     b.Property<string>("Video")
-                        .HasColumnType("varchar(1024)")
-                        .HasMaxLength(1024);
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BookId");
 
-                    b.ToTable("Note");
-                });
-
-            modelBuilder.Entity("UniNotasApi.Models.Tag", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Description")
-                        .HasColumnType("varchar(1024)")
-                        .HasMaxLength(1024);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Tags");
-                });
-
-            modelBuilder.Entity("UniNotasApi.Models.User", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("varchar(16)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("varchar(80)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("User");
-                });
-
-            modelBuilder.Entity("UniNotasApi.Models.Book", b =>
-                {
-                    b.HasOne("UniNotasApi.Models.Tag", "Tag")
-                        .WithOne("Book")
-                        .HasForeignKey("UniNotasApi.Models.Book", "TagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.ToTable("notes");
                 });
 
             modelBuilder.Entity("UniNotasApi.Models.Note", b =>

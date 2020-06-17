@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,101 +11,52 @@ using UniNotasApi.Models;
 
 namespace UniNotasApi.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class NotesController : ControllerBase
+    [Route("v1/notes")]
+    public class NotesController : Controller
     {
-        private readonly UniNotasContext _context;
-
-        public NotesController(UniNotasContext context)
-        {
-            _context = context;
-        }
-
-        // GET: api/Notes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Note>>> Getnotes()
+        [Route("")]
+        [AllowAnonymous]
+        public async Task<ActionResult<List<Note>>> Get([FromServices] UniNotasContext context)
         {
-            return await _context.notes.ToListAsync();
+            var notes = await context.notes.Include(x => x.Book).AsNoTracking().ToListAsync();
+            return notes;
         }
 
-        // GET: api/Notes/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Note>> GetNote(long id)
+        [HttpGet]
+        [Route("{id:int}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<Note>> GetById([FromServices] UniNotasContext context, int id)
         {
-            var note = await _context.notes.FindAsync(id);
-
-            if (note == null)
-            {
-                return NotFound();
-            }
-
-            return note;
+            var notes = await context.notes.Include(x => x.Book).AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            return notes;
         }
 
-        // PUT: api/Notes/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutNote(long id, Note note)
+        [HttpGet]
+        [Route("book/{id:int}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<List<Note>>> GetByCategory([FromServices] UniNotasContext context, int id)
         {
-            if (id != note.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(note).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!NoteExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            var notes = await context.notes.Include(x => x.Book).AsNoTracking().Where(x => x.BookId == id).ToListAsync();
+            return notes;
         }
 
-        // POST: api/Notes
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Note>> PostNote(Note note)
+        [Route("")]
+        public async Task<ActionResult<Note>> Post(
+            [FromServices] UniNotasContext context,
+            [FromBody]Note model)
         {
-            _context.notes.Add(note);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetNote", new { id = note.Id }, note);
-        }
-
-        // DELETE: api/Notes/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Note>> DeleteNote(long id)
-        {
-            var note = await _context.notes.FindAsync(id);
-            if (note == null)
+            if (ModelState.IsValid)
             {
-                return NotFound();
+                context.notes.Add(model);
+                await context.SaveChangesAsync();
+                return model;
             }
-
-            _context.notes.Remove(note);
-            await _context.SaveChangesAsync();
-
-            return note;
-        }
-
-        private bool NoteExists(long id)
-        {
-            return _context.notes.Any(e => e.Id == id);
+            else
+            {
+                return BadRequest(ModelState);
+            }
         }
     }
 }

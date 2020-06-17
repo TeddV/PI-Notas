@@ -28,7 +28,7 @@ namespace UniNotasApi
         {
             services.AddControllers();
             services.AddDbContext<UniNotasContext>(
-                opt => opt.UseSqlServer(Configuration.GetConnectionString("connectionString")));
+                opt => opt.UseSqlServer(Configuration.GetConnectionString("connectionStrings")));
             services.AddScoped<UniNotasContext, UniNotasContext>();
         }
 

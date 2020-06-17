@@ -10,8 +10,8 @@ using UniNotasApi.Data;
 namespace UniNotasApi.Migrations
 {
     [DbContext(typeof(UniNotasContext))]
-    [Migration("20200428150555_Initial")]
-    partial class Initial
+    [Migration("20200617174847_Fix")]
+    partial class Fix
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,16 +28,11 @@ namespace UniNotasApi.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("TagId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(60)")
+                        .HasMaxLength(60);
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TagId")
-                        .IsUnique();
 
                     b.ToTable("books");
                 });
@@ -49,9 +44,6 @@ namespace UniNotasApi.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Audio")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<long>("BookId")
                         .HasColumnType("bigint");
 
@@ -61,11 +53,9 @@ namespace UniNotasApi.Migrations
                     b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("LastUpdateDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Text")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(1024)")
+                        .HasMaxLength(1024);
 
                     b.Property<string>("Video")
                         .HasColumnType("nvarchar(max)");
@@ -75,48 +65,6 @@ namespace UniNotasApi.Migrations
                     b.HasIndex("BookId");
 
                     b.ToTable("notes");
-                });
-
-            modelBuilder.Entity("UniNotasApi.Models.Tag", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Tag");
-                });
-
-            modelBuilder.Entity("UniNotasApi.Models.User", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("users");
-                });
-
-            modelBuilder.Entity("UniNotasApi.Models.Book", b =>
-                {
-                    b.HasOne("UniNotasApi.Models.Tag", "Tag")
-                        .WithOne("Book")
-                        .HasForeignKey("UniNotasApi.Models.Book", "TagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("UniNotasApi.Models.Note", b =>
